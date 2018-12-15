@@ -1,4 +1,6 @@
 let React = require('react');
+let CommonError = require('./../Errors/CommonError.jsx');
+let Waiting = require('./../Waiting/Waiting.jsx');
 
 class VerificationSubmitForm extends React.Component {
     constructor(props) {
@@ -6,6 +8,8 @@ class VerificationSubmitForm extends React.Component {
 
         this.state = {
             waiting: false,
+            error: false,
+            errorMessage: "",
             mainWindow: props.mainWindow
         };
     }
@@ -16,6 +20,33 @@ class VerificationSubmitForm extends React.Component {
         });
     };
 
+    showError = (message) => {
+        console.log(message);
+        this.setState({
+            error: true,
+            errorMessage: message
+        });
+    };
+
+    startVerification = () => {
+        let context = this;
+        let waves = this.state.mainWindow.Waves;
+        this.waiting();
+        if (!this.isWavesExist()) return;
+        waves.auth({
+            name: "BVS App",
+            data: "Dm49U_fjm4!ds22HqoF8"
+        }).then(
+            function (data) {
+                console.log("OK", data);
+            },
+            function (data) {
+                console.log("NOT OK", data);
+                context.showError(data.message);
+            }
+        );
+    };
+
     isWavesExist = () => {
         return (typeof this.state.mainWindow.Waves !== 'undefined');
     };
@@ -23,30 +54,32 @@ class VerificationSubmitForm extends React.Component {
     render() {
         let context = this;
 
-        if ((context.state.waiting) && (!context.isWavesExist())){
+        if (context.state.error) {
             return (
                 <div className="container border">
-                    <div className="row justify-content-center">
-                        <div className="alert alert-danger" role="alert">
-                            You must install Waves Keeper plugin before start Verification!
-                        </div>
-                    </div>
-                    <div className="row justify-content-center">
-                        <a className={"btn btn-primary"} href={"https://chrome.google.com/webstore/detail/waves-keeper/lpilbniiabackdjcionkobglmddfbcjo"}>Download Waves Keeper</a>
-                    </div>
+                    <CommonError.CommonError message={context.state.errorMessage}/>
+                </div>
+            );
+        }
+
+        if ((context.state.waiting) && (!context.isWavesExist())){
+            let additionalHtml = (
+                <div className="row justify-content-center">
+                    <a className={"btn btn-primary"} href={"https://chrome.google.com/webstore/detail/waves-keeper/lpilbniiabackdjcionkobglmddfbcjo"}>Download Waves Keeper</a>
+                </div>
+            );
+            return (
+                <div className="container border">
+                    <CommonError.CommonError
+                        additionalHtml = {additionalHtml}
+                        message={"You must install Waves Keeper plugin before start Verification!"}
+                    />
                 </div>
             );
         }
 
         if (context.state.waiting) return (
-            <div className="container border">
-                <div className="row justify-content-center">
-                    <h1>Please wait...</h1>
-                </div>
-                <div className="row justify-content-center">
-                    <img src={"/img/waiting.gif"} />
-                </div>
-            </div>
+            <Waiting.Waiting />
         );
 
         return (
@@ -63,7 +96,7 @@ class VerificationSubmitForm extends React.Component {
                     <img src={"/img/budglass.png"} />
                 </div>
                 <div className="row justify-content-center">
-                        <button className={"btn btn-primary"} onClick={this.waiting}>Start verification</button>
+                        <button className={"btn btn-primary"} onClick={this.startVerification}>Start verification</button>
                 </div>
             </div>
         );
