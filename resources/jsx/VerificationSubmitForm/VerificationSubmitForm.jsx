@@ -5,7 +5,8 @@ class VerificationSubmitForm extends React.Component {
         super(props);
 
         this.state = {
-            waiting: false
+            waiting: false,
+            mainWindow: props.mainWindow
         };
     }
 
@@ -16,7 +17,7 @@ class VerificationSubmitForm extends React.Component {
     };
 
     isWavesExist = () => {
-       return document.hasOwnProperty('Waves');
+        return (typeof this.state.mainWindow.Waves !== 'undefined');
     };
 
     render() {
