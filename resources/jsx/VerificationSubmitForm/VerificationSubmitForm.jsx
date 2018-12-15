@@ -1,6 +1,8 @@
 let React = require('react');
 let CommonError = require('./../Errors/CommonError.jsx');
 let Waiting = require('./../Waiting/Waiting.jsx');
+let WelcomeScreen = require('./../Screens/WelcomeScreen.jsx');
+let FormScreen = require('./../Screens/FormScreen.jsx');
 
 class VerificationSubmitForm extends React.Component {
     constructor(props) {
@@ -10,7 +12,12 @@ class VerificationSubmitForm extends React.Component {
             waiting: false,
             error: false,
             errorMessage: "",
-            mainWindow: props.mainWindow
+            mainWindow: props.mainWindow,
+            showForm: false,
+            data: {
+                address: "",
+                publicKey: ""
+            }
         };
     }
 
@@ -21,7 +28,6 @@ class VerificationSubmitForm extends React.Component {
     };
 
     showError = (message) => {
-        console.log(message);
         this.setState({
             error: true,
             errorMessage: message
@@ -38,10 +44,21 @@ class VerificationSubmitForm extends React.Component {
             data: "Dm49U_fjm4!ds22HqoF8"
         }).then(
             function (data) {
-                console.log("OK", data);
+                console.log(
+                    "OK",data);
+                let address = data.address;
+                let publicKey = data.publicKey;
+                context.setState({
+                    error: false,
+                    waiting: false,
+                    showForm: true,
+                    data: {
+                        address: address,
+                        publicKey: publicKey
+                    }
+                });
             },
             function (data) {
-                console.log("NOT OK", data);
                 context.showError(data.message);
             }
         );
@@ -82,23 +99,12 @@ class VerificationSubmitForm extends React.Component {
             <Waiting.Waiting />
         );
 
+        if(context.state.showForm) return (
+            <FormScreen.FormScreen data={context.state.data} />
+        );
+
         return (
-            <div className="container border">
-                <div className="row">
-                </div>
-                <div className="row justify-content-center">
-                        <h1>Know your buddy!</h1>
-                </div>
-                <div className="row justify-content-center">
-                    <h3>Bud Verification Service</h3>
-                </div>
-                <div className="row justify-content-center">
-                    <img src={"/img/budglass.png"} />
-                </div>
-                <div className="row justify-content-center">
-                        <button className={"btn btn-primary"} onClick={this.startVerification}>Start verification</button>
-                </div>
-            </div>
+            <WelcomeScreen.WelcomeScreen startVerification={context.startVerification} />
         );
     }
 }
