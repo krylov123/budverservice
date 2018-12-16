@@ -12,7 +12,7 @@ class Waiting extends React.Component {
                     <h1>Please wait...</h1>
                 </div>
                 <div className="row justify-content-center">
-                    <img src={"/img/waiting.gif"} />
+                    <img src={"img/waiting.gif"} />
                 </div>
             </div>
         );

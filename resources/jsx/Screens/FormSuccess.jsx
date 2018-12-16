@@ -17,7 +17,7 @@ class FormSuccess extends React.Component {
                     <h3>Now its time to hangs out</h3>
                 </div>
                 <div className="row justify-content-center">
-                    <img src={"/img/success.jpg"}/>
+                    <img src={"img/success.jpg"}/>
                 </div>
             </div>
         );

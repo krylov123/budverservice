@@ -19,7 +19,7 @@ class WelcomeScreen extends React.Component {
                     <h3>Bud Verification Service</h3>
                 </div>
                 <div className="row justify-content-center">
-                    <img src={"/img/budglass.png"}/>
+                    <img src={"img/budglass.png"}/>
                 </div>
                 <div className="row justify-content-center">
                     <button className={"btn btn-primary"} onClick={context.props.startVerification}>Start verification</button>
