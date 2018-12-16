@@ -3,6 +3,7 @@ let CommonError = require('./../Errors/CommonError.jsx');
 let Waiting = require('./../Waiting/Waiting.jsx');
 let WelcomeScreen = require('./../Screens/WelcomeScreen.jsx');
 let FormScreen = require('./../Screens/FormScreen.jsx');
+let FormSuccess = require('./../Screens/FormSuccess.jsx');
 
 class VerificationSubmitForm extends React.Component {
     constructor(props) {
@@ -14,13 +15,21 @@ class VerificationSubmitForm extends React.Component {
             errorMessage: "",
             mainWindow: props.mainWindow,
             showForm: false,
+            showSuccess: false,
             data: {
                 address: "",
                 publicKey: "",
-                email: ""
+                email: "",
+                idFile: null
             }
         };
     }
+
+    showSuccessScreen = () => {
+        this.setState({
+            showSuccess: true
+        });
+    };
 
     updateData = (data) => {
         this.setState({
@@ -51,8 +60,6 @@ class VerificationSubmitForm extends React.Component {
             data: "Dm49U_fjm4!ds22HqoF8"
         }).then(
             function (data) {
-                console.log(
-                    "OK",data);
                 let address = data.address;
                 let publicKey = data.publicKey;
                 context.setState({
@@ -86,32 +93,38 @@ class VerificationSubmitForm extends React.Component {
             );
         }
 
-        if ((context.state.waiting) && (!context.isWavesExist())){
+        if ((context.state.waiting) && (!context.isWavesExist())) {
             let additionalHtml = (
                 <div className="row justify-content-center">
-                    <a className={"btn btn-primary"} href={"https://chrome.google.com/webstore/detail/waves-keeper/lpilbniiabackdjcionkobglmddfbcjo"}>Download Waves Keeper</a>
+                    <a className={"btn btn-primary"}
+                       href={"https://chrome.google.com/webstore/detail/waves-keeper/lpilbniiabackdjcionkobglmddfbcjo"}>Download
+                        Waves Keeper</a>
                 </div>
             );
             return (
                 <div className="container border">
                     <CommonError.CommonError
-                        additionalHtml = {additionalHtml}
+                        additionalHtml={additionalHtml}
                         message={"You must install Waves Keeper plugin before start Verification!"}
                     />
                 </div>
             );
         }
 
-        if (context.state.waiting) return (
-            <Waiting.Waiting />
+        if (context.state.showSuccess) return (
+            <FormSuccess.FormSuccess/>
         );
 
-        if(context.state.showForm) return (
-            <FormScreen.FormScreen data={context.state.data} updateData={context.updateData} />
+        if (context.state.waiting) return (
+            <Waiting.Waiting/>
+        );
+
+        if (context.state.showForm) return (
+            <FormScreen.FormScreen data={context.state.data} updateData={context.updateData} showSuccessScreen={context.showSuccessScreen}/>
         );
 
         return (
-            <WelcomeScreen.WelcomeScreen startVerification={context.startVerification} />
+            <WelcomeScreen.WelcomeScreen startVerification={context.startVerification}/>
         );
     }
 }
