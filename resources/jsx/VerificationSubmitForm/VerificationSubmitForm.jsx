@@ -16,10 +16,17 @@ class VerificationSubmitForm extends React.Component {
             showForm: false,
             data: {
                 address: "",
-                publicKey: ""
+                publicKey: "",
+                email: ""
             }
         };
     }
+
+    updateData = (data) => {
+        this.setState({
+            data: data
+        });
+    };
 
     waiting = () => {
         this.setState({
@@ -100,7 +107,7 @@ class VerificationSubmitForm extends React.Component {
         );
 
         if(context.state.showForm) return (
-            <FormScreen.FormScreen data={context.state.data} />
+            <FormScreen.FormScreen data={context.state.data} updateData={context.updateData} />
         );
 
         return (
